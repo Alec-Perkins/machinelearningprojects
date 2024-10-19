@@ -35,7 +35,7 @@ with open('noisydata-1.pickle', 'rb') as pick:
     pickleData = np.array(pickle.load(pick))
 
 print("\nNoisy Data Mean:\n", meanAndCov(pickleData)[0])
-print("\nCovariance matrix:\n", meanAndCov(pickleData)[1])
+print("\nCovariance:\n", meanAndCov(pickleData)[1])
 
 
 #############################################################################
@@ -43,27 +43,83 @@ print("\n\n2.a) Random nxm matrix ----------------------------------------------
 
 
 def generateRandomMatrix(n, m):
-    np.random.seed(int(time.time()))  # Seed RNG with current computer time
+    np.random.seed(int(time.time()))  # Seed RNG with current computer's time stamp
     randomMatrix = []
     for i in range(n):
         row = []
         for j in range(m):
-            row.append(round(np.random.rand()*10, 3))
+            row.append(round(np.random.rand()*10))
         randomMatrix.append(row)
     return np.array(randomMatrix)
 
 def askUserForMatrixDimension():
     n = int(input("\nWhat would you like your row size to be for your random matrix? "))
     m = int(input("\nAnd your column size? "))
-    if type(n) is int and type(m) is int:
-        randMatrix = generateRandomMatrix(n, m)
-        return randMatrix
-    else:
-        print("Sorry, either your row input or column input was not an integer.")
-        
+    randMatrix = generateRandomMatrix(n, m)
+    return randMatrix
+  
+
+usersMatrix = askUserForMatrixDimension()
+print("\nHere is your random matrix:\n", usersMatrix)
 
 
-print("\nHere is your random matrix:\n", askUserForMatrixDimension())
+#############################################################################
+print("\n\n2) Singular Value Decompostion ---------------------------------------------")
 
+def calculateMySVD(A):
+    # Calculating eigenvalue decomp of A @ A^T and A^T @ A
+    ATA = A.T @ A
+    AAT = A @ A.T
+    
+    # Calculating eigen values and vectors
+    eigenValuesOfU, U = np.linalg.eig(AAT)
+    eigenValuesOfV, V = np.linalg.eig(ATA)
+    
+    smallestVal = 1e-10
+    eigenValuesOfU = np.where(eigenValuesOfU > smallestVal, eigenValuesOfU, 0)
+
+    # Finding the singular values by square rooting the EVs
+    singularValues = np.sqrt(eigenValuesOfU)
+    Sigma = np.diag(singularValues)
+
+    matrixAnswers = [U, Sigma, V.T]
+    return matrixAnswers
+
+
+# Calculating the SVD with a non-square matrix
+matrixAnswers = calculateMySVD(generateRandomMatrix(5,3))
+print("\nU :\n", matrixAnswers[0], "\n\n")
+print("∑ :\n", matrixAnswers[1], "\n\n")
+print("V :\n", matrixAnswers[2], "\n")
+
+
+#############################################################################
+print("\n\n3) Developing a Machine Learning Algorithm in Python with Num ----------------------")
+
+x0 = np.array([3, 1, 3])
+x1 = np.array([4, 3, 2])
+x2 = np.array([5, 2, 1])
+x3 = np.array([6, 1, 1])
+
+# Creating Xp and Xf matrices or "past and future" matrices
+Xp = np.vstack([x0, x1, x2]).T
+Xf = np.vstack([x1, x2, x3]).T
+
+# Printing the A matrix estimation 
+A = Xf @ np.linalg.inv(Xp)
+print("\nEstimated A matrix:\n", A, "\n")
+
+
+
+# Answer to 2.b)
+
+# No, due to the given values of x[0], x[1], x[2], and x[3] there will not be
+# a state component that is fully independent of the others because each
+# component in the state variable x evolves due to the to the matrix A
+# and is influenced by the other components in the system due to A's
+# coupling of the state components.
+
+
+# Answer to 2.c)
 
 
