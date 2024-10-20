@@ -1,3 +1,5 @@
+# Alec Perkins 7225998
+
 import numpy as np
 import pickle
 import time
@@ -48,7 +50,7 @@ def generateRandomMatrix(n, m):
     for i in range(n):
         row = []
         for j in range(m):
-            row.append(round(np.random.rand()*10))
+            row.append(np.random.rand()*10)
         randomMatrix.append(row)
     return np.array(randomMatrix)
 
@@ -75,6 +77,7 @@ def calculateMySVD(A):
     eigenValuesOfU, U = np.linalg.eig(AAT)
     eigenValuesOfV, V = np.linalg.eig(ATA)
     
+    # Making the zeros easier to recognize
     smallestVal = 1e-10
     eigenValuesOfU = np.where(eigenValuesOfU > smallestVal, eigenValuesOfU, 0)
 
@@ -107,19 +110,7 @@ Xf = np.vstack([x1, x2, x3]).T
 
 # Printing the A matrix estimation 
 A = Xf @ np.linalg.inv(Xp)
+smallestVal = 1e-10
+A = np.where(A > smallestVal, A, 0)
+
 print("\nEstimated A matrix:\n", A, "\n")
-
-
-
-# Answer to 2.b)
-
-# No, due to the given values of x[0], x[1], x[2], and x[3] there will not be
-# a state component that is fully independent of the others because each
-# component in the state variable x evolves due to the to the matrix A
-# and is influenced by the other components in the system due to A's
-# coupling of the state components.
-
-
-# Answer to 2.c)
-
-
